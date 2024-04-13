@@ -66,7 +66,7 @@ You can install Postman via this website: https://www.postman.com/downloads/
     -   [x] Commit: `Create Notification database and Notification repository struct skeleton.`
     -   [x] Commit: `Implement add function in Notification repository.`
     -   [x] Commit: `Implement list_all_as_string function in Notification repository.`
-    -   [ ] Write answers of your learning module's "Reflection Subscriber-1" questions in this README.
+    -   [x] Write answers of your learning module's "Reflection Subscriber-1" questions in this README.
 -   **STAGE 3: Implement services and controllers**
     -   [x] Commit: `Create Notification service struct skeleton.`
     -   [x] Commit: `Implement subscribe function in Notification service.`
@@ -85,5 +85,22 @@ This is the place for you to write reflections:
 ### Mandatory (Subscriber) Reflections
 
 #### Reflection Subscriber-1
+1. In this tutorial, we used `RwLock<>` to synchronise the use of `Vec` of `Notification`s. Explain why it is necessary for this case, and explain why we do not use `Mutex<>` instead?
 
+The code used `RwLock<Vec>` to coordinate access to the shared `Vec` of `Notifications` within the `NotificationRepository`. This guarantees that:
+ * Multiple threads can concurrently read from the data structure or permit a single thread to modify it at any given time. 
+ * Prevents race condition and ensuring thread safety. 
+ * `RwLock` is favored over `Mutex` here because it facilitates concurrent reading of the notifications list by multiple threads, thus enhancing concurrency and performance, particularly in scenarios with frequent read operations. 
+ * `Mutex` restricts access to a single thread and may cause unnecessary blocking and reduced concurrency
+ * `RwLock` enables effective coordination of both read and write access to maximize concurrency while maintaining thread safety. 
+ 
+ Hence why `RwLock` is the optimal choice when efficient coordination of read and write operations is necessary to achieve maximum concurrency and ensure thread safety.
+
+2. In this tutorial, we used `lazy_static` external library to define `Vec` and `DashMap` as a `static` variable via a `static` function, why did not Rust allow us to do so?
+
+In Rust, static variables are designed to be immutable by default for safety reasons. This design choice aligns with Rust's emphasis on memory safety and preventing data races. This ensures that they cannot be modified concurrently by multiple threads, which helps ensures thread safety.
+
+Allowing mutable static variables, especially to be modified by static functions, would introduce potential issues related to thread safety and data races. In concurrent environments, mutable static variables could lead to race conditions, where multiple threads attempt to modify the variable's state simultaneously, resulting in unpredictable behavior.
+
+By disallowing mutable static variables by default, Rust encourages developers to use safer concurrency patterns, such as using synchronization primitives like Mutex or RwLock to control access to shared state. While this may require more explicit handling of mutability, it ultimately leads to more robust and predictable concurrent programs.
 #### Reflection Subscriber-2
